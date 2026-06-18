@@ -2,6 +2,8 @@
 
 FinTrack es una solución _Full-Stack_ moderna para la gestión y el análisis de finanzas personales. Su diseño combina una potente interfaz inmersiva estilo "Dark Premium" (construida sobre **Streamlit**) con un motor robusto de almacenamiento local mediante una API REST (**Hono.js**) y conversiones de divisa en tiempo real soportadas por servicios en la nube.
 
+Proyecto trabajado en clases de Administración de sistemas de información.
+
 ---
 
 ##  Arquitectura del Sistema
