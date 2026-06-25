@@ -157,10 +157,11 @@ else:
 
 try:
     cat_r = api.get_category_stats(month_input)
-    cats_spent = set(cat_r.keys())
-    budgeted_cats = set(b["category"] for b in budgets)
-    unbudgeted = cats_spent - budgeted_cats
-    if unbudgeted:
-        st.warning(f"La API reporta gastos en categorías sin presupuesto asignado: **{', '.join(unbudgeted)}**")
-except:
+    if isinstance(cat_r, dict):
+        cats_spent = set(cat_r.keys())
+        budgeted_cats = set(b["category"] for b in budgets) if budgets else set()
+        unbudgeted = cats_spent - budgeted_cats
+        if unbudgeted:
+            st.warning(f"La API reporta gastos en categorías sin presupuesto asignado: **{', '.join(unbudgeted)}**")
+except Exception:
     pass

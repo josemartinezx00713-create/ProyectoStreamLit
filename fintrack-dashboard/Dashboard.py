@@ -27,18 +27,18 @@ def get_prev_month(month_str: str) -> str:
     except:
         return ""
 
-def calc_delta(curr, prev, invert_colors=False):
+def calc_delta(curr, prev, prev_label, invert_colors=False):
     if not prev or prev == 0:
         return ""
     pct = ((curr - prev) / prev) * 100
     if pct > 0:
         css = "delta-positive" if not invert_colors else "delta-negative"
-        return f'<div class="delta-badge {css}">+{pct:.1f}% vs {prev_month_input}</div>'
+        return f'<div class="delta-badge {css}">+{pct:.1f}% vs {prev_label}</div>'
     elif pct < 0:
         css = "delta-negative" if not invert_colors else "delta-positive"
-        return f'<div class="delta-badge {css}">{pct:.1f}% vs {prev_month_input}</div>'
+        return f'<div class="delta-badge {css}">{pct:.1f}% vs {prev_label}</div>'
     else:
-        return f'<div class="delta-badge delta-neutral">0% vs {prev_month_input}</div>'
+        return f'<div class="delta-badge delta-neutral">0% vs {prev_label}</div>'
 
 def fetch_summary(month):
     try:
@@ -68,16 +68,16 @@ prev_summary = fetch_summary(prev_month_input) if prev_month_input else None
 if summary:
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        d_inc = calc_delta(summary["income"], prev_summary["income"] if prev_summary else 0)
+        d_inc = calc_delta(summary["income"], prev_summary["income"] if prev_summary else 0, prev_month_input)
         render_kpi_card(c1, "Ingresos Totales", fmt_money(summary["income"]), d_inc, "card-income", "payments", "#10B981")
     with c2:
-        d_exp = calc_delta(summary["expense"], prev_summary["expense"] if prev_summary else 0, invert_colors=True)
+        d_exp = calc_delta(summary["expense"], prev_summary["expense"] if prev_summary else 0, prev_month_input, invert_colors=True)
         render_kpi_card(c2, "Gastos Totales", fmt_money(summary["expense"]), d_exp, "card-expense", "credit_card", "#EF4444")
     with c3:
-        d_bal = calc_delta(summary["balance"], prev_summary["balance"] if prev_summary else 0)
+        d_bal = calc_delta(summary["balance"], prev_summary["balance"] if prev_summary else 0, prev_month_input)
         render_kpi_card(c3, "Balance Neto", fmt_money(summary["balance"]), d_bal, "card-balance", "account_balance", "#14B8A6")
     with c4:
-        d_sav = calc_delta(summary["savingsRate"], prev_summary["savingsRate"] if prev_summary else 0)
+        d_sav = calc_delta(summary["savingsRate"], prev_summary["savingsRate"] if prev_summary else 0, prev_month_input)
         render_kpi_card(c4, "Tasa de Ahorro", f'{summary["savingsRate"]:,.1f}%', d_sav, "card-savings", "trending_up", "#14B8A6")
 
     col1, col2 = st.columns([1, 1.5])

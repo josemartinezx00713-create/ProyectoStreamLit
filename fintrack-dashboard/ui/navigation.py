@@ -1,14 +1,14 @@
 import streamlit as st
-from services.api_client import ApiClient
+from services.ports import IApiClient
 from services.currency_service import CurrencyService, CURRENCIES
 
 
-def render_sidebar(api_client: ApiClient, currency_service: CurrencyService):
+def render_sidebar(api_client: IApiClient, currency_service: CurrencyService):
     _render_connection_status(api_client)
     _render_currency_selector(currency_service)
 
 
-def _render_connection_status(api_client: ApiClient):
+def _render_connection_status(api_client: IApiClient):
     online = api_client.check_status()
     if online:
         st.sidebar.markdown(

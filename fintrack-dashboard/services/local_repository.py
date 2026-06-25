@@ -1,14 +1,12 @@
-from services.cache_service import CacheService
+from services.ports import (
+    ICacheRepository, ITransactionRepository, IBudgetRepository,
+    IGoalRepository, IStatsRepository
+)
 from models.exceptions import DatosNoEncontradosError
 
 
-class LocalRepository:
-    """Repositorio local que actúa como fallback cuando la API no está disponible.
-
-    Almacena y recupera datos desde SQLite local (cache_fintrack.db).
-    """
-
-    def __init__(self, cache: CacheService):
+class LocalRepository(ITransactionRepository, IBudgetRepository, IGoalRepository, IStatsRepository):
+    def __init__(self, cache: ICacheRepository):
         self.cache = cache
 
     def get_transactions(self, month: str = "", category: str = "", type_: str = "") -> list:
@@ -21,6 +19,18 @@ class LocalRepository:
             data = [t for t in data if t.get("type") == type_]
         return data
 
+    def create_transaction(self, data: dict) -> dict:
+        raise NotImplementedError("LocalRepository es solo lectura.")
+
+    def update_transaction(self, id: str, data: dict) -> dict:
+        raise NotImplementedError("LocalRepository es solo lectura.")
+
+    def delete_transaction(self, id: str) -> dict:
+        raise NotImplementedError("LocalRepository es solo lectura.")
+
+    def bulk_delete_transactions(self, ids: list[str]) -> dict:
+        raise NotImplementedError("LocalRepository es solo lectura.")
+
     def cache_transactions(self, transactions: list, month: str):
         self.cache.cache_transactions(transactions, month)
 
@@ -30,6 +40,21 @@ class LocalRepository:
             raise DatosNoEncontradosError("No hay presupuestos en caché local.")
         return data
 
+    def get_budget_status(self, month: str) -> list:
+        return self.get_budgets(month)
+
+    def create_budget(self, data: dict) -> dict:
+        raise NotImplementedError("LocalRepository es solo lectura.")
+
+    def update_budget(self, id: str, data: dict) -> dict:
+        raise NotImplementedError("LocalRepository es solo lectura.")
+
+    def delete_budget(self, id: str) -> dict:
+        raise NotImplementedError("LocalRepository es solo lectura.")
+
+    def bulk_delete_budgets(self, ids: list[str]) -> dict:
+        raise NotImplementedError("LocalRepository es solo lectura.")
+
     def cache_budgets(self, budgets: list, month: str):
         self.cache.cache_budgets(budgets, month)
 
@@ -38,6 +63,18 @@ class LocalRepository:
         if not data:
             raise DatosNoEncontradosError("No hay metas en caché local.")
         return data
+
+    def create_goal(self, data: dict) -> dict:
+        raise NotImplementedError("LocalRepository es solo lectura.")
+
+    def deposit_to_goal(self, id: str, amount: float) -> dict:
+        raise NotImplementedError("LocalRepository es solo lectura.")
+
+    def delete_goal(self, id: str) -> dict:
+        raise NotImplementedError("LocalRepository es solo lectura.")
+
+    def bulk_delete_goals(self, ids: list[str]) -> dict:
+        raise NotImplementedError("LocalRepository es solo lectura.")
 
     def cache_goals(self, goals: list):
         self.cache.cache_goals(goals)
@@ -88,3 +125,6 @@ class LocalRepository:
         expenses = [t for t in transactions if t.get("type") == "expense"]
         expenses.sort(key=lambda x: x["amount"], reverse=True)
         return expenses[:limit]
+
+    def get_heatmap(self, month: str) -> dict:
+        raise NotImplementedError("LocalRepository no soporta heatmap.")

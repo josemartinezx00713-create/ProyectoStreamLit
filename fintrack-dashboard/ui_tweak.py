@@ -1,5 +1,10 @@
 import streamlit as st
 from dataclasses import dataclass
+from services.ports import (
+    IApiClient, ITransactionRepository, IBudgetRepository,
+    IGoalRepository, IStatsRepository, IExchangeRateRepository,
+    ICacheRepository
+)
 from services.api_client import ApiClient
 from services.cache_service import CacheService
 from services.currency_service import CurrencyService, CURRENCIES as _CURRENCIES
@@ -87,11 +92,11 @@ def render_currency_selector():
     _render_currency_selector(_get_container().currency_service)
 
 
-def get_api_client():
+def get_api_client() -> ApiClient:
     return _get_container().api_client
 
 
-def get_local_repo():
+def get_local_repo() -> LocalRepository:
     return _get_container().local_repo
 
 

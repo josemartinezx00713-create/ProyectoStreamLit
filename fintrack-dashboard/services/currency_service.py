@@ -1,7 +1,6 @@
 import json
 import os
-from services.api_client import ApiClient
-from services.cache_service import CacheService
+from services.ports import IExchangeRateRepository, ICacheRepository
 
 PREFS_FILE = "user_preferences.json"
 BASE_CURRENCY = "NIO"
@@ -14,8 +13,8 @@ CURRENCIES = [
 
 
 class CurrencyService:
-    def __init__(self, api_client: ApiClient, cache: CacheService):
-        self.api = api_client
+    def __init__(self, exchange_repo: IExchangeRateRepository, cache: ICacheRepository):
+        self.exchange_repo = exchange_repo
         self.cache = cache
 
     def get_currency_string(self) -> str:
@@ -36,10 +35,10 @@ class CurrencyService:
             json.dump({"currency": symbol}, f)
 
     def get_currency_code(self) -> str:
-        return self.get_currency_string().split("(")[-1].replace(")", "")
+        return self.get_currency_string().split("(")[-1].replace(")", "").strip()
 
     def get_currency_symbol(self) -> str:
-        return self.get_currency_string().split(" ")[1]
+        return self.get_currency_string().split(" ")[0]
 
     def get_rate(self) -> float:
         code = self.get_currency_code()
@@ -51,7 +50,7 @@ class CurrencyService:
             return local
 
         try:
-            data = self.api.get("/exchange-rates")
+            data = self.exchange_repo.get_exchange_rates()
             rates = data.get("rates", {})
             if rates:
                 self.cache.cache_rates(BASE_CURRENCY, rates)

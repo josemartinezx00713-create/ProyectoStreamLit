@@ -1,13 +1,19 @@
 import os
 import requests
 from typing import Any, Optional
-from services.ports import IApiClient
+from services.ports import (
+    IApiClient, ITransactionRepository, IBudgetRepository,
+    IGoalRepository, IStatsRepository, IExchangeRateRepository
+)
 from models.exceptions import ApiCaidaError, DatosNoEncontradosError
 
 API_URL = os.environ.get("FINTRACK_API_URL", "http://localhost:3000")
 
 
-class ApiClient(IApiClient):
+class ApiClient(
+    IApiClient, ITransactionRepository, IBudgetRepository,
+    IGoalRepository, IStatsRepository, IExchangeRateRepository
+):
     def __init__(self, base_url: str = API_URL):
         self.base_url = base_url
 
@@ -85,6 +91,9 @@ class ApiClient(IApiClient):
     def bulk_delete_transactions(self, ids: list[str]) -> dict:
         return self.post("/transactions/bulk-delete", {"ids": ids})
 
+    def cache_transactions(self, transactions: list, month: str):
+        pass
+
     # -- Budgets --
     def get_budgets(self, month: str = "") -> list:
         params = {}
@@ -106,6 +115,9 @@ class ApiClient(IApiClient):
     def bulk_delete_budgets(self, ids: list[str]) -> dict:
         return self.post("/budgets/bulk-delete", {"ids": ids})
 
+    def cache_budgets(self, budgets: list, month: str):
+        pass
+
     # -- Goals --
     def get_goals(self) -> list:
         return self.get("/goals")
@@ -121,6 +133,9 @@ class ApiClient(IApiClient):
 
     def bulk_delete_goals(self, ids: list[str]) -> dict:
         return self.post("/goals/bulk-delete", {"ids": ids})
+
+    def cache_goals(self, goals: list):
+        pass
 
     # -- Stats --
     def get_summary(self, month: str) -> dict:

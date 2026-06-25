@@ -15,7 +15,12 @@ fintrack-dashboard/user_preferences.json
 fintrack-api/node_modules/
 fintrack-api/dist/
 fintrack-api/fintrack.db
+fintrack-api/fintrack.db-shm
+fintrack-api/fintrack.db-wal
 fintrack-api/db.json
+fintrack-api/src/fintrack.db
+fintrack-api/src/fintrack.db-shm
+fintrack-api/src/fintrack.db-wal
 
 # IDE
 .vscode/
